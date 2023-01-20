@@ -16,6 +16,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCA.Services.Identity", "MCA.Services.Identity\MCA.Services.Identity.csproj", "{87F789EF-2C6A-4883-951A-3E80C6F8349C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +32,10 @@ Global
 		{CD8DDC13-5501-42CF-B1CE-32A417B9C577}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD8DDC13-5501-42CF-B1CE-32A417B9C577}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD8DDC13-5501-42CF-B1CE-32A417B9C577}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87F789EF-2C6A-4883-951A-3E80C6F8349C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87F789EF-2C6A-4883-951A-3E80C6F8349C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87F789EF-2C6A-4883-951A-3E80C6F8349C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87F789EF-2C6A-4883-951A-3E80C6F8349C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -37,6 +43,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{BF285992-B1C2-4BC0-AC9D-F6E6817A8A30} = {C85479CC-C763-4472-9BF2-F5EB5E83E415}
 		{CD8DDC13-5501-42CF-B1CE-32A417B9C577} = {66BB88B4-D65C-4F66-B77D-15335677E459}
+		{87F789EF-2C6A-4883-951A-3E80C6F8349C} = {66BB88B4-D65C-4F66-B77D-15335677E459}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {319C49D7-9DF8-4F5B-AE18-322D1F26AB6C}
