@@ -1,5 +1,7 @@
 ﻿using MCA.web.Models;
 using MCA.web.Services.IServices;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -18,7 +20,8 @@ namespace MCA.web.Controllers
         public async Task<IActionResult> ProductIndex()
         {
             List<ProductDto> list = new();
-            var response = await _productService.GetAllProductAsync<ResponseDto>();
+            var accessToken = await HttpContext.GetTokenAsync("access_token");
+            var response = await _productService.GetAllProductAsync<ResponseDto>(accessToken);
             if (response != null && response.Success)
             {
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
@@ -42,7 +45,8 @@ namespace MCA.web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var response = await _productService.CreateProductAsync<ResponseDto>(product);
+                var accessToken = await HttpContext.GetTokenAsync("access_token");
+                var response = await _productService.CreateProductAsync<ResponseDto>(product, accessToken);
                 if (response != null && response.Success)
                 {
                     return RedirectToAction("ProductIndex");
@@ -53,7 +57,8 @@ namespace MCA.web.Controllers
         }
         public async Task<IActionResult> ProductEdit( int productId)
         {
-            var response = await _productService.GetProductByIdAsync<ResponseDto>(productId);
+            var accessToken = await HttpContext.GetTokenAsync("access_token");
+            var response = await _productService.GetProductByIdAsync<ResponseDto>(productId, accessToken);
             if (response != null && response.Success)
             {
                 ProductDto product = JsonConvert.DeserializeObject<ProductDto>(Convert.ToString(response.Result));
@@ -68,7 +73,8 @@ namespace MCA.web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var response = await _productService.CreateProductAsync<ResponseDto>(product);
+                var accessToken = await HttpContext.GetTokenAsync("access_token");
+                var response = await _productService.CreateProductAsync<ResponseDto>(product, accessToken);
                 if (response != null && response.Success)
                 {
                     return RedirectToAction("ProductIndex");
@@ -79,7 +85,8 @@ namespace MCA.web.Controllers
         }
         public async Task<IActionResult> ProductDelete(int productId)
         {
-            var response = await _productService.GetProductByIdAsync<ResponseDto>(productId);
+            var accessToken = await HttpContext.GetTokenAsync("access_token");
+            var response = await _productService.GetProductByIdAsync<ResponseDto>(productId, accessToken);
             if (response != null && response.Success)
             {
                 ProductDto product = JsonConvert.DeserializeObject<ProductDto>(Convert.ToString(response.Result));
@@ -90,11 +97,13 @@ namespace MCA.web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ProductDelete(ProductDto product)
         {
             if (ModelState.IsValid)
             {
-                var response = await _productService.DeleteProductAsync<ResponseDto>(product.ProductId);
+                var accessToken = await HttpContext.GetTokenAsync("access_token");
+                var response = await _productService.DeleteProductAsync<ResponseDto>(product.ProductId, accessToken);
                 if (response != null && response.Success)
                 {
                     return RedirectToAction("ProductIndex");

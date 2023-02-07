@@ -1,5 +1,6 @@
 ﻿using MCA.web.Models;
 using Newtonsoft.Json;
+using System.Net.Http.Headers;
 using System.Text;
 
 namespace MCA.web.Services.IServices
@@ -34,6 +35,12 @@ namespace MCA.web.Services.IServices
                         Encoding.UTF8, "application/json");
 
                 }
+
+                if (!string.IsNullOrEmpty(apiRequest.AccessToken))
+                {
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiRequest.AccessToken);
+                }
+
                 HttpResponseMessage apiResponse = null;
                 switch (apiRequest.ApiType)
                 {

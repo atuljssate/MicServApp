@@ -1,7 +1,9 @@
+using Duende.IdentityServer.Services;
 using MCA.Services.Identity;
 using MCA.Services.Identity.DBContexts;
 using MCA.Services.Identity.Initializer;
 using MCA.Services.Identity.Models;
+using MCA.Services.Identity.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +36,7 @@ builder.Services.AddIdentityServer(options =>
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
+builder.Services.AddScoped<IProfileService, ProfileService>();
 
 var app = builder.Build();
 using var scope = app.Services.CreateScope();

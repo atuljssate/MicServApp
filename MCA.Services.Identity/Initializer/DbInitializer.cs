@@ -60,7 +60,7 @@ namespace MCA.Services.Identity.Initializer
 
             };
             _userManager.CreateAsync(custUser, "Cust123*").GetAwaiter().GetResult();
-            _userManager.AddToRoleAsync(custUser, SD.Admin).GetAwaiter().GetResult();
+            _userManager.AddToRoleAsync(custUser, SD.Customer).GetAwaiter().GetResult();
 
             var temp2 = _userManager.AddClaimsAsync(custUser, new Claim[]
             {

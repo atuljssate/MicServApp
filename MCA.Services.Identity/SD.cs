@@ -35,10 +35,10 @@ namespace MCA.Services.Identity
                 },
                 new Client
                 {
-                    ClientId="MCA",
+                    ClientId="mca",
                     ClientSecrets={ new Secret("secret".Sha256())},
-                    AllowedGrantTypes= GrantTypes.ClientCredentials,
-                    RedirectUris={ "https://localhost:44326/signin-oidc"},
+                    AllowedGrantTypes= GrantTypes.Code,
+                    RedirectUris={ "https://localhost:44326/signin-oidc","https://localhost:7081/signin-oidc","http://localhost:5081/signin-oidc"},
                     PostLogoutRedirectUris={ "https://localhost:44326/signout-callback-oidc"},
                     AllowedScopes= new List<string>
                     {
