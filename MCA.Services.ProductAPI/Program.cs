@@ -35,7 +35,7 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("ApiScope", policy =>
     {
         policy.RequireAuthenticatedUser();
-        policy.RequireClaim("scope", "mca");
+        policy.RequireClaim("scope", "msa");
     });
 });
 
@@ -43,7 +43,7 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "MCA.Services.ProductAPI", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "MSA.Services.ProductAPI", Version = "v1" });
     c.EnableAnnotations();
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {

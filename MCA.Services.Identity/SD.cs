@@ -18,7 +18,7 @@ namespace MCA.Services.Identity
             };
         public static IEnumerable<ApiScope> ApiScopes =>
             new List<ApiScope> {
-                new ApiScope("mca", "MCA Server"),
+                new ApiScope("msa", "MSA Server"),
                     new ApiScope(name:"read", displayName: "Read your data."),
                     new ApiScope(name:"write", displayName: "Write your data."),
                     new ApiScope(name:"delete", displayName: "Delete your data.")
@@ -35,7 +35,7 @@ namespace MCA.Services.Identity
                 },
                 new Client
                 {
-                    ClientId="mca",
+                    ClientId="msa",
                     ClientSecrets={ new Secret("secret".Sha256())},
                     AllowedGrantTypes= GrantTypes.Code,
                     RedirectUris={ "https://localhost:44326/signin-oidc","https://localhost:7081/signin-oidc","http://localhost:5081/signin-oidc"},
@@ -45,7 +45,7 @@ namespace MCA.Services.Identity
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.Email,
-                        "mca"
+                        "msa"
                     }
                 }
             };

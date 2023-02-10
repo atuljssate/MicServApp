@@ -1,11 +1,11 @@
-﻿using MCA.web.Models;
-using MCA.web.Services.IServices;
+﻿using MSA.web.Models;
+using MSA.web.Services.IServices;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
-namespace MCA.web.Controllers
+namespace MSA.web.Controllers
 {
     public class ProductController : Controller
     {

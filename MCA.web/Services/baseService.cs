@@ -1,9 +1,11 @@
-﻿using MCA.web.Models;
+﻿using MSA.web;
+using MSA.web.Models;
+using MSA.web.Services.IServices;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
 
-namespace MCA.web.Services.IServices
+namespace MSA.web.Services
 {
     public class BaseService : IBaseService
     {
@@ -13,8 +15,8 @@ namespace MCA.web.Services.IServices
 
         public BaseService(IHttpClientFactory httpClientFactory)
         {
-            this.ResponseModel = new ResponseDto();
-            this.HttpClientFactory = httpClientFactory;
+            ResponseModel = new ResponseDto();
+            HttpClientFactory = httpClientFactory;
         }
 
         public async Task<T> SendAsync<T>(ApiRequest apiRequest)
@@ -59,7 +61,7 @@ namespace MCA.web.Services.IServices
                 }
                 apiResponse = await client.SendAsync(message);
                 var apiContent = await apiResponse.Content.ReadAsStringAsync();
-                var apiResponseDto=JsonConvert.DeserializeObject<T>(apiContent);
+                var apiResponseDto = JsonConvert.DeserializeObject<T>(apiContent);
                 return apiResponseDto;
             }
             catch (Exception e)
@@ -68,7 +70,7 @@ namespace MCA.web.Services.IServices
                 {
                     Message = "Error",
                     Errors = new List<string> { Convert.ToString(e.Message) },
-                    Success=false
+                    Success = false
                 };
                 var res = JsonConvert.SerializeObject(dto);
                 var apiResponseDto = JsonConvert.DeserializeObject<T>(res);

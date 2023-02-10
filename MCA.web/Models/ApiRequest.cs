@@ -1,12 +1,12 @@
-﻿using static MCA.web.SD;
+﻿using static MSA.web.SD;
 
-namespace MCA.web.Models
+namespace MSA.web.Models
 {
     public class ApiRequest
     {
         public ApiType ApiType { get; set; } = ApiType.GET;
-        public string? Url { get; set; }
-        public object? Data { get; set; } 
-        public string? AccessToken { get; set; }
+        public string Url { get; set; }
+        public object Data { get; set; } 
+        public string AccessToken { get; set; }
     }
 }

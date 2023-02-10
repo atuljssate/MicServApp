@@ -1,7 +1,8 @@
-﻿using MCA.web.Models;
-using MCA.web.Services.IServices;
+﻿using MSA.web;
+using MSA.web.Models;
+using MSA.web.Services.IServices;
 
-namespace MCA.web.Services
+namespace MSA.web.Services
 {
     public class ProductService : BaseService, IProductService
     {
@@ -20,15 +21,15 @@ namespace MCA.web.Services
                 Data = productDto,
                 Url = SD.ProductAPIBase + "/api/product",
                 AccessToken = token
-            }); 
+            });
         }
 
         public async Task<T> DeleteProductAsync<T>(int id, string token)
         {
             return await SendAsync<T>(new ApiRequest()
             {
-                ApiType = SD.ApiType.DELETE,                
-                Url = SD.ProductAPIBase + "/api/product/"+ id,
+                ApiType = SD.ApiType.DELETE,
+                Url = SD.ProductAPIBase + "/api/product/" + id,
                 AccessToken = token
             });
         }
@@ -48,7 +49,7 @@ namespace MCA.web.Services
             return await SendAsync<T>(new ApiRequest()
             {
                 ApiType = SD.ApiType.GET,
-                Url = SD.ProductAPIBase + "/api/product/"+ id,
+                Url = SD.ProductAPIBase + "/api/product/" + id,
                 AccessToken = token
             });
         }

@@ -1,6 +1,6 @@
-﻿using MCA.web.Models;
+﻿using MSA.web.Models;
 
-namespace MCA.web.Services.IServices
+namespace MSA.web.Services.IServices
 {
     public interface IProductService
     {
