@@ -70,8 +70,8 @@ namespace MSA.web.Controllers
 
             List<CartDetailsDto> cartDetailsList = new List<CartDetailsDto>();  
             cartDetailsList.Add(cartDetails);
-            cartDto.CartDetails = cartDetailsList;
-            var accessToken = await HttpContext.GetTokenAsync("access_toekn");
+            cartDto.CartDetails = cartDetailsList;            
+            var accessToken = await HttpContext.GetTokenAsync("access_token");
             var addToCartResp= await _cartService.AddToCartAsync<ResponseDto>(cartDto, accessToken);
             
             if (addToCartResp != null && addToCartResp.Success)
@@ -95,6 +95,8 @@ namespace MSA.web.Controllers
         [Authorize]
         public async Task<IActionResult> Login()
         {
+            //var accessToken = await HttpContext.GetTokenAsync("access_token");            
+            //var idToken = await HttpContext.GetTokenAsync("id_token");
             return RedirectToAction(nameof(Index));
         }
         public IActionResult Logout()

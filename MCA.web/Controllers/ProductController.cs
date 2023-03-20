@@ -20,7 +20,7 @@ namespace MSA.web.Controllers
         public async Task<IActionResult> ProductIndex()
         {
             List<ProductDto> list = new();
-            var accessToken = await HttpContext.GetTokenAsync("access_token");
+            var accessToken = await HttpContext.GetTokenAsync("id_token");
             var response = await _productService.GetAllProductAsync<ResponseDto>(accessToken);
             if (response != null && response.Success)
             {
@@ -45,7 +45,7 @@ namespace MSA.web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var accessToken = await HttpContext.GetTokenAsync("access_token");
+                var accessToken = await HttpContext.GetTokenAsync("id_token");
                 var response = await _productService.CreateProductAsync<ResponseDto>(product, accessToken);
                 if (response != null && response.Success)
                 {
@@ -57,7 +57,7 @@ namespace MSA.web.Controllers
         }
         public async Task<IActionResult> ProductEdit( int productId)
         {
-            var accessToken = await HttpContext.GetTokenAsync("access_token");
+            var accessToken = await HttpContext.GetTokenAsync("id_token");
             var response = await _productService.GetProductByIdAsync<ResponseDto>(productId, accessToken);
             if (response != null && response.Success)
             {
@@ -73,7 +73,7 @@ namespace MSA.web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var accessToken = await HttpContext.GetTokenAsync("access_token");
+                var accessToken = await HttpContext.GetTokenAsync("id_token");
                 var response = await _productService.CreateProductAsync<ResponseDto>(product, accessToken);
                 if (response != null && response.Success)
                 {
@@ -85,7 +85,7 @@ namespace MSA.web.Controllers
         }
         public async Task<IActionResult> ProductDelete(int productId)
         {
-            var accessToken = await HttpContext.GetTokenAsync("access_token");
+            var accessToken = await HttpContext.GetTokenAsync("id_token");
             var response = await _productService.GetProductByIdAsync<ResponseDto>(productId, accessToken);
             if (response != null && response.Success)
             {
@@ -102,7 +102,7 @@ namespace MSA.web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var accessToken = await HttpContext.GetTokenAsync("access_token");
+                var accessToken = await HttpContext.GetTokenAsync("id_token");
                 var response = await _productService.DeleteProductAsync<ResponseDto>(product.ProductId, accessToken);
                 if (response != null && response.Success)
                 {

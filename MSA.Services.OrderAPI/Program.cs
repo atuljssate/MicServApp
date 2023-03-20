@@ -2,9 +2,8 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using MSA.Services.ShoppingCartAPI;
-using MSA.Services.ShoppingCartAPI.DbContexts;
-using MSA.Services.ShoppingCartAPI.Repository;
+using MSA.Services.OrderAPI.DbContexts;
+using MSA.Services.OrderAPI.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,10 +12,15 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
 sqlServerOptions => sqlServerOptions.CommandTimeout(300)));
 
-IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
-builder.Services.AddSingleton(mapper);
+//IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
+//builder.Services.AddSingleton(mapper);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-builder.Services.AddScoped<ICartRepository, CartRepository>();
+//builder.Services.AddScoped<ICartRepository, CartRepository>();
+
+var optionBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
+optionBuilder.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+builder.Services.AddSingleton(new OrderRepository(optionBuilder.Options));
+
 
 builder.Services.AddControllers();
 
@@ -43,7 +47,7 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "MSA.Services.ShoppingCartAPI", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "MSA.Services.OrderAPI", Version = "v1" });
     c.EnableAnnotations();
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
