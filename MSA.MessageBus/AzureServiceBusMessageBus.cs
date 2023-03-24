@@ -2,18 +2,17 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace MSA.MessageBus
 {
-    internal class AzureServiceBusMessageBus : IMessageBus
+    public class AzureServiceBusMessageBus : IMessageBus
     {
         //to be improved
-        private string connectionString = "";
+        private readonly string connectionString = "Endpoint=sb://msarestaurant.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=6hrwnRwK5vZn2Cf4HN09RTDQLUKnNq1aD+ASbBGEDTY=";
 
-        public async Task PublicMessage(BaseMessage message, string topicName)
+        public async Task PublishMessage(BaseMessage message, string topicName)
         {
            await using var client= new ServiceBusClient(connectionString);
             ServiceBusSender sender = client.CreateSender(topicName);

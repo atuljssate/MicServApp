@@ -77,20 +77,26 @@ namespace MSA.web.Controllers
             return View(await LoadCartDtoBasedOnLoggedInUser());
         }
 
-        [HttpPost]        
+        [HttpPost]
         public async Task<IActionResult> Checkout(CartDto cartDto)
         {
             try
             {
                 var accessToken = await HttpContext.GetTokenAsync("access_token");
                 var response = await _cartService.Checkout<ResponseDto>(cartDto.CartHeader, accessToken);
+                if (!response.Success)
+                {
+                    TempData["Error"] = response.Message;
+                    return RedirectToAction(nameof(Checkout));
+                }
                 return RedirectToAction(nameof(Confirmation));
             }
-            catch(Exception e) {
+            catch (Exception e)
+            {
                 return View(cartDto);
             }
         }
-                
+
         public async Task<IActionResult> Confirmation()
         {
             return View();

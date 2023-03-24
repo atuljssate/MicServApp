@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using MSA.MessageBus;
 using MSA.Services.ShoppingCartAPI;
 using MSA.Services.ShoppingCartAPI.DbContexts;
 using MSA.Services.ShoppingCartAPI.Repository;
@@ -17,13 +18,16 @@ IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
 builder.Services.AddSingleton(mapper);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<ICartRepository, CartRepository>();
-
+builder.Services.AddScoped<ICouponRepository, CouponRepository>();
+builder.Services.AddSingleton<IMessageBus, AzureServiceBusMessageBus>();
 builder.Services.AddControllers();
+
+builder.Services.AddHttpClient<ICouponRepository, CouponRepository>(u=>u.BaseAddress= new Uri(builder.Configuration["ServiceUrls:CouponAPI"])); 
 
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
-        options.Authority = "https://sso.voith.com/am/oauth2";// "https://localhost:44311/";
+        options.Authority = "https://localhost:44311/"; //"https://sso.voith.com/am/oauth2";// 
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateAudience = false

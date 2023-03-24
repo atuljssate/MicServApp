@@ -1,8 +1,10 @@
-﻿namespace MSA.MessageBus
+﻿using System.Threading.Tasks;
+
+namespace MSA.MessageBus
 {
     public interface IMessageBus
     {
-        Task PublicMessage(BaseMessage message, string topicName);
+        Task PublishMessage(BaseMessage message, string topicName);
 
     }
 }

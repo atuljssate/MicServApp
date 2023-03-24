@@ -23,7 +23,7 @@ builder.Services.AddControllers();
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
-        options.Authority = "https://sso.voith.com/am/oauth2";// "https://localhost:44311/";
+        options.Authority = "https://localhost:44311/"; //"https://sso.voith.com/am/oauth2";// 
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateAudience = false

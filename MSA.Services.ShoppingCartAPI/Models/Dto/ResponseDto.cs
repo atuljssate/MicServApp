@@ -1,4 +1,4 @@
-﻿namespace MCA.Services.ShoppingCartAPI.Models.Dto
+﻿namespace MSA.Services.ShoppingCartAPI.Models.Dto
 {
     public class ResponseDto
     {

@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using MSA.MessageBus;
 using MSA.Services.OrderAPI.DbContexts;
 using MSA.Services.OrderAPI.Extension;
 using MSA.Services.OrderAPI.Messaging;
@@ -22,15 +23,15 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 var optionBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
 optionBuilder.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 builder.Services.AddSingleton(new OrderRepository(optionBuilder.Options));
+builder.Services.AddSingleton<IMessageBus, AzureServiceBusMessageBus>(); 
 builder.Services.AddSingleton<IAzureServiceBusConsumer, AzureServiceBusConsumer>();
-
 
 builder.Services.AddControllers();
 
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
-        options.Authority = "https://sso.voith.com/am/oauth2";// "https://localhost:44311/";
+        options.Authority = "https://localhost:44311/"; //"https://sso.voith.com/am/oauth2";// 
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateAudience = false

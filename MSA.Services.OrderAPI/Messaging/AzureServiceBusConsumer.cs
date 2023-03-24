@@ -1,4 +1,5 @@
 ﻿using Azure.Messaging.ServiceBus;
+using MSA.MessageBus;
 using MSA.Services.OrderAPI.Messages;
 using MSA.Services.OrderAPI.Models;
 using MSA.Services.OrderAPI.Repository;
@@ -7,28 +8,39 @@ using System.Text;
 
 namespace MSA.Services.OrderAPI.Messaging
 {
-    public class AzureServiceBusConsumer: IAzureServiceBusConsumer
+    public class AzureServiceBusConsumer : IAzureServiceBusConsumer
     {
         private readonly OrderRepository _orderRepository;
 
         private readonly string serviceBusConnectionString;
         private readonly string subscriptionCheckOut;
         private readonly string checkoutMessageTopic;
-        
+        private readonly string orderPaymentProcessTopic;
+        private readonly string updatePaymentResultSubscription;
+        private readonly string orderUpdatePaymentResultTopic;
+
         private ServiceBusProcessor checkOutProcessor;
+        private ServiceBusProcessor orderUpdatePaymentStatusProcessor;
 
         private readonly IConfiguration _configuration;
+        private readonly IMessageBus _messageBus;
 
-        public AzureServiceBusConsumer(OrderRepository orderRepository, IConfiguration configuration)
+        public AzureServiceBusConsumer(OrderRepository orderRepository, IConfiguration configuration, IMessageBus messageBus)
         {
-            _orderRepository = orderRepository; 
+            _orderRepository = orderRepository;
             _configuration = configuration;
+            _messageBus = messageBus;
+
             serviceBusConnectionString = _configuration.GetValue<string>("ServiceBusConnectionString");
             subscriptionCheckOut = _configuration.GetValue<string>("SubscriptionCheckOut");
             checkoutMessageTopic = _configuration.GetValue<string>("CheckoutMessageTopic");
+            orderPaymentProcessTopic = _configuration.GetValue<string>("OrderPaymentProcessTopic");
+            updatePaymentResultSubscription = _configuration.GetValue<string>("UpdatePaymentResultSubscription");
+            orderUpdatePaymentResultTopic = _configuration.GetValue<string>("OrderUpdatePaymentResultTopic");
 
-            var client= new ServiceBusClient(serviceBusConnectionString);
-            checkOutProcessor=client.CreateProcessor(checkoutMessageTopic, subscriptionCheckOut);
+            var client = new ServiceBusClient(serviceBusConnectionString);
+            checkOutProcessor = client.CreateProcessor(checkoutMessageTopic, subscriptionCheckOut);
+            orderUpdatePaymentStatusProcessor = client.CreateProcessor(orderUpdatePaymentResultTopic, updatePaymentResultSubscription);
         }
 
         public async Task Start()
@@ -36,23 +48,31 @@ namespace MSA.Services.OrderAPI.Messaging
             checkOutProcessor.ProcessMessageAsync += OnCheckOutMessageReveived;
             checkOutProcessor.ProcessErrorAsync += ErrorHandler;
             await checkOutProcessor.StartProcessingAsync();
+
+            orderUpdatePaymentStatusProcessor.ProcessMessageAsync += OnOrderPaymentUpdateReveived;
+            orderUpdatePaymentStatusProcessor.ProcessErrorAsync += ErrorHandler;
+            await orderUpdatePaymentStatusProcessor.StartProcessingAsync();
         }
 
         public async Task Stop()
         {
             await checkOutProcessor.StopProcessingAsync();
             await checkOutProcessor.DisposeAsync();
+
+            await orderUpdatePaymentStatusProcessor.StopProcessingAsync();
+            await orderUpdatePaymentStatusProcessor.DisposeAsync();
         }
 
         Task ErrorHandler(ProcessErrorEventArgs args)
         {
             Console.WriteLine(args.Exception.ToString());
-            return Task.CompletedTask;  
+            return Task.CompletedTask;
         }
-        private async Task OnCheckOutMessageReveived(ProcessMessageEventArgs args) 
-        { 
+
+        private async Task OnCheckOutMessageReveived(ProcessMessageEventArgs args)
+        {
             var message = args.Message;
-            var body= Encoding.UTF8.GetString(message.Body);
+            var body = Encoding.UTF8.GetString(message.Body);
 
             CheckoutHeaderDto checkoutHeaderDto = JsonConvert.DeserializeObject<CheckoutHeaderDto>(body);
 
@@ -74,13 +94,13 @@ namespace MSA.Services.OrderAPI.Messaging
                 Phone = checkoutHeaderDto.Phone,
                 PickUpDateTime = checkoutHeaderDto.PickUpDateTime
             };
-            foreach (var detailList in orderHeader.OrderDetails) 
+            foreach (var detailList in checkoutHeaderDto.CartDetails)
             {
                 OrderDetails orderDetails = new()
                 {
                     ProductId = detailList.ProductId,
-                    ProductName = detailList.ProductName,
-                    Price = detailList.Price,
+                    ProductName = detailList.Product.Name,
+                    Price = detailList.Product.Price,
                     Count = detailList.Count
                 };
 
@@ -88,7 +108,55 @@ namespace MSA.Services.OrderAPI.Messaging
                 orderHeader.OrderDetails.Add(orderDetails);
             }
 
-            await _orderRepository.AddOrder(orderHeader);
+            try
+            {
+                await _orderRepository.AddOrder(orderHeader);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+
+            PaymentRequestMessage paymentRequestMessage = new()
+            {
+                Name = orderHeader.FirstName + " " + orderHeader.LastName,
+                CardNumber = orderHeader.CardNumber,
+                CVV = orderHeader.CVV,
+                ExpiryMonthYear = orderHeader.ExpiryMonthYear,
+                OrderId = orderHeader.OrderHeaderId,
+                OrderTotal = orderHeader.OrderTotal
+            };
+
+            try
+            {
+                await _messageBus.PublishMessage(paymentRequestMessage, orderPaymentProcessTopic);
+                await args.CompleteMessageAsync(args.Message);
+            }
+            catch (Exception e)
+            {
+                //to be improved
+                throw;
+            }
+
+        }
+
+        private async Task OnOrderPaymentUpdateReveived(ProcessMessageEventArgs args)
+        {
+            var message = args.Message;
+            var body = Encoding.UTF8.GetString(message.Body);
+            try
+            {
+                UpdatePaymentResultMessage paymentResultMessage = JsonConvert.DeserializeObject<UpdatePaymentResultMessage>(body);
+
+                await _orderRepository.UpdateOrderPaymentStatus(paymentResultMessage.OrderId, paymentResultMessage.Status);
+                await args.CompleteMessageAsync(args.Message);
+            }
+            catch (Exception e)
+            {
+                //to be improved
+                throw;
+            }
 
         }
     }

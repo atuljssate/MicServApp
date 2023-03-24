@@ -29,33 +29,37 @@ builder.Services.AddAuthentication(options =>
     .AddCookie("Cookies", c => c.ExpireTimeSpan = TimeSpan.FromMinutes(10))
     .AddOpenIdConnect("oidc", options =>
     {
-        options.Authority = builder.Configuration["ServiceUrls:IdentityAPI"];
-        options.GetClaimsFromUserInfoEndpoint = true;
-        options.CallbackPath = "/auth/signin-oidc";
-        options.ClientId = "claimvtadevcon";
-        //options.ClientSecret = "secret";
-        options.ResponseType = "code";
-        //options.ClaimActions.MapJsonKey("role", "role", "role");
-        //options.ClaimActions.MapJsonKey("sub", "sub", "sub");
-        //options.TokenValidationParameters.NameClaimType = "Name";
-        //options.TokenValidationParameters.NameClaimType = "Role";
-        //options.Scope.Add("msascope");
-        options.Scope.Add("openid profile email");
-        options.SaveTokens = true;
-
-        /*
-        options.Authority = "https://localhost:44311";// builder.Configuration["ServiceUrls:IdentityAPI"];
-        options.GetClaimsFromUserInfoEndpoint = true;
-        options.ClientId = "msa";
-        options.ClientSecret = "secret";
-        options.ResponseType = "code";
-        options.ClaimActions.MapJsonKey("role", "role", "role");
-        options.ClaimActions.MapJsonKey("sub", "sub", "sub");
-        options.TokenValidationParameters.NameClaimType = "Name";
-        options.TokenValidationParameters.NameClaimType = "Role";
-        options.Scope.Add("msascope");
-        options.SaveTokens = true;        
-        */
+        if (1 == 2)
+        {
+            options.Authority = builder.Configuration["ServiceUrls:IdentityAPIVo"];
+            options.GetClaimsFromUserInfoEndpoint = true;
+            options.CallbackPath = "/auth/signin-oidc";
+            options.ClientId = "claimvtadevcon";
+            //options.ClientSecret = "secret";
+            options.ResponseType = "code";
+            //options.ClaimActions.MapJsonKey("role", "role", "role");
+            //options.ClaimActions.MapJsonKey("sub", "sub", "sub");
+            //options.TokenValidationParameters.NameClaimType = "Name";
+            //options.TokenValidationParameters.NameClaimType = "Role";
+            //options.Scope.Add("msascope");
+            options.Scope.Add("openid profile email");
+            options.SaveTokens = true;
+        }
+        else
+        {
+            options.Authority = builder.Configuration["ServiceUrls:IdentityAPI"];
+            options.GetClaimsFromUserInfoEndpoint = true;
+            options.ClientId = "msa";
+            options.ClientSecret = "secret";
+            options.ResponseType = "code";
+            options.ClaimActions.MapJsonKey("role", "role", "role");
+            options.ClaimActions.MapJsonKey("sub", "sub", "sub");
+            options.TokenValidationParameters.NameClaimType = "Name";
+            options.TokenValidationParameters.NameClaimType = "Role";
+            options.Scope.Add("msascope");
+            options.SaveTokens = true;
+        }
+        
     });
 
 var app = builder.Build();

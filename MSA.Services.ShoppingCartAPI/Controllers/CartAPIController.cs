@@ -1,5 +1,5 @@
-﻿using MCA.Services.ShoppingCartAPI.Models.Dto;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using MSA.MessageBus;
 using MSA.Services.ShoppingCartAPI.Messages;
 using MSA.Services.ShoppingCartAPI.Models.Dto;
 using MSA.Services.ShoppingCartAPI.Repository;
@@ -10,12 +10,16 @@ namespace MSA.Services.ShoppingCartAPI.Controllers
     [Route("api/cart")]
     public class CartAPIController : Controller
     {
-        private ICartRepository _cartRepository;
+        private readonly ICartRepository _cartRepository;
+        private readonly IMessageBus _messageBus;
+        private readonly ICouponRepository _couponRepository;
         protected ResponseDto _responseDto;
 
-        public CartAPIController(ICartRepository cartRepository)
+        public CartAPIController(ICartRepository cartRepository,IMessageBus messageBus, ICouponRepository couponRepository)
         {
             _cartRepository = cartRepository;
+            _messageBus = messageBus;
+            _couponRepository = couponRepository;   
             this._responseDto = new ResponseDto();
         }
 
@@ -122,8 +126,24 @@ namespace MSA.Services.ShoppingCartAPI.Controllers
                 {
                     return BadRequest();
                 }
+
+                if (!string.IsNullOrEmpty(checkoutHeaderDto.CouponCode))
+                {
+                    CouponDto coupon= await _couponRepository.GetCoupon(checkoutHeaderDto.CouponCode);
+                    if (checkoutHeaderDto.DiscountTotal != coupon.DiscountAmount)
+                    {
+                        _responseDto.Success = false;
+                        _responseDto.Errors = new List<string>() { "Coupon price has changed, please confirm." };
+                        _responseDto.Message = "Coupon price has changed, please confirm.";
+                        return _responseDto;    
+                    }
+                }
+
                 checkoutHeaderDto.CartDetails = cartDto.CartDetails;
                 //logic to add message to process order.
+                //to be improved
+                await _messageBus.PublishMessage(checkoutHeaderDto, "checkoutmessagetopic");
+                await _cartRepository.ClearCart(checkoutHeaderDto.UserId);
 
             }
             catch (Exception ex)

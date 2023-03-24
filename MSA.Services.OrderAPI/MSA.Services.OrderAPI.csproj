@@ -26,4 +26,8 @@
     <Folder Include="Controllers\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MSA.MessageBus\MSA.MessageBus.csproj" />
+  </ItemGroup>
+
 </Project>
